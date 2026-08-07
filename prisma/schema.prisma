@@ -1,0 +1,79 @@
+// Schema is deliberately Postgres-compatible: no SQLite-only types, no enums (SQLite lacks them),
+// status fields are plain strings with documented values.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AgentRun {
+  id             String           @id @default(cuid())
+  agentId        String
+  goal           String
+  output         String
+  memoriesUsed   Int              @default(0)
+  searchesUsed   Int              @default(0)
+  durationMs     Int?
+  orchestratorId String?
+  orchestrator   OrchestratorRun? @relation(fields: [orchestratorId], references: [id], onDelete: Cascade)
+  memories       AgentMemory[]
+  createdAt      DateTime         @default(now())
+
+  @@index([agentId])
+  @@index([createdAt])
+  @@index([orchestratorId])
+}
+
+model AgentMemory {
+  id        String    @id @default(cuid())
+  agentId   String
+  content   String
+  runId     String?
+  run       AgentRun? @relation(fields: [runId], references: [id], onDelete: SetNull)
+  createdAt DateTime  @default(now())
+
+  @@index([agentId])
+  @@index([createdAt])
+}
+
+model OrchestratorRun {
+  id          String     @id @default(cuid())
+  goal        String
+  summary     String?
+  agentIds    String // JSON array of agent IDs that participated
+  status      String     @default("running") // running | complete | error
+  agentRuns   AgentRun[]
+  createdAt   DateTime   @default(now())
+  completedAt DateTime?
+
+  @@index([createdAt])
+}
+
+model CampaignMetrics {
+  id                  String   @id @default(cuid())
+  weekStart           DateTime
+  weekEnd             DateTime
+  platform            String
+  totalSpend          Float
+  installs            Int
+  cpi                 Float
+  ctr                 Float
+  trialConversionRate Float
+  day7Retention       Float
+  day30Retention      Float
+  analysisRunId       String?
+  createdAt           DateTime @default(now())
+
+  @@index([weekStart])
+  @@index([platform])
+}
+
+model CompanyContext {
+  id        String   @id @default("singleton")
+  content   String
+  updatedAt DateTime @updatedAt
+}

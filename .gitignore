@@ -1,0 +1,25 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Database — never commit; it holds whatever real context you have loaded locally
+*.db
+*.db-journal
+
+# Private company contexts
+/contexts/private/
+
+# Dependencies
+node_modules
+
+# Next.js
+.next
+/out
+
+# Build / misc
+/build
+next-env.d.ts
+*.tsbuildinfo
+.DS_Store
+npm-debug.log*

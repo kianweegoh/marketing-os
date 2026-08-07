@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Light theme — the default when nothing is stored in localStorage. */
+  :root {
+    --kalo-page: 248 249 250;
+    --kalo-surface: 255 255 255;
+    --kalo-sidebar: 255 255 255;
+    --kalo-line: 228 228 231;
+    --kalo-field: 244 244 245;
+    --kalo-ink: 24 24 27;
+    --kalo-ink-muted: 113 113 122;
+    --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color-scheme: light;
+  }
+
+  .dark {
+    --kalo-page: 9 9 11;
+    --kalo-surface: 24 24 27;
+    --kalo-sidebar: 9 9 11;
+    --kalo-line: 39 39 42;
+    --kalo-field: 39 39 42;
+    --kalo-ink: 250 250 250;
+    --kalo-ink-muted: 161 161 170;
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-line;
+  }
+
+  body {
+    @apply bg-page text-ink antialiased;
+  }
+
+  /* Every interactive element gets a visible focus ring. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ink/40 ring-offset-2 ring-offset-page;
+  }
+}
+
+@layer utilities {
+  .text-muted {
+    @apply text-ink-muted;
+  }
+}
+
+/* Respect a reduced-motion preference on the pulse and bounce animations. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
