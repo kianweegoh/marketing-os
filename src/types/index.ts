@@ -35,3 +35,31 @@ export interface AgentMemoryEntry {
 
 /** UI status for an agent workspace. */
 export type AgentStatus = 'idle' | 'running' | 'complete' | 'error';
+
+/** An OrchestratorRun as it crosses the API boundary. `agentIds` is still JSON-encoded. */
+export interface OrchestratorRunRecord {
+  id: string;
+  goal: string;
+  summary: string | null;
+  agentIds: string;
+  status: string;
+  createdAt: string;
+  completedAt: string | null;
+}
+
+/** A CampaignMetrics row as it crosses the API boundary. */
+export interface CampaignMetricsRecord {
+  id: string;
+  weekStart: string;
+  weekEnd: string;
+  platform: string;
+  totalSpend: number;
+  installs: number;
+  cpi: number;
+  ctr: number;
+  trialConversionRate: number;
+  day7Retention: number;
+  day30Retention: number;
+  analysisRunId: string | null;
+  createdAt: string;
+}

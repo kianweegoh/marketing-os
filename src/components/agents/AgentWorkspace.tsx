@@ -118,7 +118,16 @@ export function AgentWorkspace({ agent }: { agent: AgentConfig }) {
       const [loadedRuns, loadedMemories] = await Promise.all([fetchHistory(), fetchMemories()]);
       setRuns(loadedRuns);
       setMemories(loadedMemories);
-      if (!streamError) setActiveRunId(loadedRuns[0]?.id ?? null);
+
+      // The live stream carries raw model text, which still contains the "## MEMORY_UPDATE"
+      // section — runAgent only splits that off once the full response has been accumulated.
+      // Swap to the persisted, already-clean output now that it exists, so the memory block
+      // never lingers on screen after the run finishes.
+      const latest = loadedRuns[0];
+      if (!streamError && latest) {
+        setRaw(latest.output);
+        setActiveRunId(latest.id);
+      }
     } catch (caught) {
       setError(errorMessage(caught));
       setStatus('error');

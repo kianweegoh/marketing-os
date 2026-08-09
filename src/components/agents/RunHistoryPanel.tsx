@@ -15,7 +15,7 @@ interface RunHistoryPanelProps {
 
 export function RunHistoryPanel({ runs, activeRunId, onSelect, isLoading }: RunHistoryPanelProps) {
   return (
-    <aside className="rounded-xl border border-line bg-surface lg:sticky lg:top-24">
+    <aside className="rounded-xl border border-line bg-surface lg:sticky lg:top-10">
       <div className="border-b border-line px-4 py-3">
         <h2 className="text-sm font-medium text-ink">Run history</h2>
       </div>

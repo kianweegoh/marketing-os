@@ -27,11 +27,12 @@ export function LogoutButton() {
       className="inline-flex items-center gap-2 rounded-lg border border-line px-3 py-2 text-sm text-ink-muted transition-colors hover:bg-field hover:text-ink disabled:opacity-60"
     >
       {isSigningOut ? (
-        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+        <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden="true" />
       ) : (
-        <LogOut className="h-4 w-4" aria-hidden="true" />
+        <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />
       )}
-      {isSigningOut ? 'Signing out…' : 'Sign out'}
+      {/* Hidden on the icon rail (narrow sidebar) — the icon alone communicates intent there. */}
+      <span className="hidden lg:inline">{isSigningOut ? 'Signing out…' : 'Sign out'}</span>
     </button>
   );
 }
