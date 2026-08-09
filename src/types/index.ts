@@ -9,3 +9,29 @@ export interface ApiError {
 
 /** Discriminated result used by client fetch helpers. */
 export type ApiResult<T> = { ok: true; data: T } | { ok: false; error: string };
+
+/**
+ * An AgentRun as it crosses the API boundary. Dates are ISO strings rather than `Date` because
+ * JSON has no date type — the client parses them where it needs to.
+ */
+export interface AgentRunSummary {
+  id: string;
+  agentId: string;
+  goal: string;
+  output: string;
+  memoriesUsed: number;
+  searchesUsed: number;
+  durationMs: number | null;
+  orchestratorId: string | null;
+  createdAt: string;
+}
+
+/** An AgentMemory as it crosses the API boundary. */
+export interface AgentMemoryEntry {
+  id: string;
+  content: string;
+  createdAt: string;
+}
+
+/** UI status for an agent workspace. */
+export type AgentStatus = 'idle' | 'running' | 'complete' | 'error';

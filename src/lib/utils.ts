@@ -102,6 +102,57 @@ export function cn(...classes: Array<string | false | null | undefined>): string
   return classes.filter(Boolean).join(' ');
 }
 
+/* -------------------------------------------------------------------------- */
+/* Stream markers                                                              */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The run stream interleaves the model's text with two HTML-comment markers:
+ * `<!--SEARCH:query-->` for an inline search pill, and `<!--ERROR:message-->` for a failure that
+ * happened after the response headers were already sent. Neither is ever saved to the database.
+ */
+const SEARCH_MARKER = /<!--SEARCH:([\s\S]*?)-->/g;
+const ERROR_MARKER = /<!--ERROR:([\s\S]*?)-->/g;
+
+export type OutputSegment =
+  | { kind: 'text'; content: string }
+  | { kind: 'search'; query: string };
+
+/** Splits streamed output into renderable segments so search pills appear inline, in order. */
+export function parseOutputSegments(raw: string): OutputSegment[] {
+  const segments: OutputSegment[] = [];
+  const withoutErrors = raw.replace(ERROR_MARKER, '');
+  let lastIndex = 0;
+
+  // `matchAll` needs a fresh lastIndex each call because the regex is global and module-scoped.
+  SEARCH_MARKER.lastIndex = 0;
+
+  for (const match of withoutErrors.matchAll(SEARCH_MARKER)) {
+    const index = match.index ?? 0;
+    const before = withoutErrors.slice(lastIndex, index);
+    if (before.trim()) segments.push({ kind: 'text', content: before });
+    segments.push({ kind: 'search', query: match[1] ?? '' });
+    lastIndex = index + match[0].length;
+  }
+
+  const tail = withoutErrors.slice(lastIndex);
+  if (tail.trim()) segments.push({ kind: 'text', content: tail });
+
+  return segments;
+}
+
+/** Strips every marker — used for copy, export, and anything persisted. */
+export function stripMarkers(raw: string): string {
+  return raw.replace(SEARCH_MARKER, '').replace(ERROR_MARKER, '').trim();
+}
+
+/** Returns the error carried by a trailing error marker, if the stream ended in failure. */
+export function extractStreamError(raw: string): string | null {
+  const matches = [...raw.matchAll(ERROR_MARKER)];
+  const last = matches.at(-1);
+  return last?.[1]?.trim() || null;
+}
+
 /** Truncates to `max` characters on a word boundary, appending an ellipsis when it cuts. */
 export function truncate(text: string, max: number): string {
   if (text.length <= max) return text;
