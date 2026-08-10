@@ -6,6 +6,7 @@ import { AgentInput } from '@/components/agents/AgentInput';
 import { AgentOutputPanel } from '@/components/agents/AgentOutputPanel';
 import { MemoryViewer } from '@/components/agents/MemoryViewer';
 import { RunHistoryPanel } from '@/components/agents/RunHistoryPanel';
+import { useToast } from '@/components/shared/Toast';
 import type { AgentConfig } from '@/lib/agents/types';
 import { errorMessage, extractStreamError } from '@/lib/utils';
 import type { AgentMemoryEntry, AgentRunSummary, AgentStatus } from '@/types';
@@ -15,6 +16,7 @@ import type { AgentMemoryEntry, AgentRunSummary, AgentStatus } from '@/types';
  * from the registry config passed in by the server component.
  */
 export function AgentWorkspace({ agent }: { agent: AgentConfig }) {
+  const { showToast } = useToast();
   const [goal, setGoal] = useState('');
   const [raw, setRaw] = useState('');
   const [status, setStatus] = useState<AgentStatus>('idle');
@@ -150,10 +152,17 @@ export function AgentWorkspace({ agent }: { agent: AgentConfig }) {
         throw new Error(data.error ?? 'Could not clear memories.');
       }
       setMemories([]);
+      showToast('Memory cleared.');
     } catch (caught) {
       setError(errorMessage(caught));
     }
   }
+
+  // While a run is in flight the live-typed goal is the best label; once it lands in history,
+  // the persisted run's own goal is authoritative (matters after selecting an older run, whose
+  // goal differs from whatever is currently typed in the input box).
+  const activeRun = runs.find((run) => run.id === activeRunId);
+  const displayGoal = activeRun?.goal ?? goal;
 
   return (
     <div className="animate-fade-in">
@@ -174,6 +183,7 @@ export function AgentWorkspace({ agent }: { agent: AgentConfig }) {
             raw={raw}
             isRunning={status === 'running'}
             error={error}
+            goal={displayGoal}
           />
 
           <MemoryViewer memories={memories} onClear={handleClearMemories} />

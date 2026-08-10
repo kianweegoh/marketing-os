@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Check, ChevronDown, Copy, Download, Search } from 'lucide-react';
 import { MarkdownRenderer } from '@/components/shared/MarkdownRenderer';
+import { SaveToDocsButton } from '@/components/shared/SaveToDocsButton';
+import { useToast } from '@/components/shared/Toast';
 import type { AgentConfig } from '@/lib/agents/types';
 import { cn, truncate } from '@/lib/utils';
 import type { AgentRunSummary } from '@/types';
@@ -18,15 +20,18 @@ const PREVIEW_LENGTH = 200;
 export function LibraryResultCard({ run, agent }: LibraryResultCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
+  const { showToast } = useToast();
 
   async function handleCopy(event: React.MouseEvent): Promise<void> {
     event.stopPropagation();
     try {
       await navigator.clipboard.writeText(run.output);
       setCopied(true);
+      showToast('Copied to clipboard.');
       window.setTimeout(() => setCopied(false), 2000);
     } catch (caught) {
       console.error('[library] Copy failed:', caught);
+      showToast('Could not copy — your browser blocked clipboard access.', { variant: 'error' });
     }
   }
 
@@ -39,6 +44,7 @@ export function LibraryResultCard({ run, agent }: LibraryResultCardProps) {
     link.download = `${agent.id}-${run.createdAt.slice(0, 10)}.md`;
     link.click();
     URL.revokeObjectURL(url);
+    showToast('Exported as Markdown.');
   }
 
   return (
@@ -106,7 +112,7 @@ export function LibraryResultCard({ run, agent }: LibraryResultCardProps) {
               <Download className="h-3.5 w-3.5" aria-hidden="true" />
               Export .md
             </button>
-            {/* Save to Docs button lands with the Google integration batch. */}
+            <SaveToDocsButton agentName={agent.name} goal={run.goal} content={run.output} />
           </div>
 
           <MarkdownRenderer content={run.output} />

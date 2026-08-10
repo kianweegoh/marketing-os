@@ -24,6 +24,8 @@ export function MetricsWorkspace({ initialMetrics }: MetricsWorkspaceProps) {
   const [analysisRaw, setAnalysisRaw] = useState('');
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [hasAnalysis, setHasAnalysis] = useState(initialMetrics.some((m) => m.analysisRunId));
+  // Feeds the Save to Docs title on the reused AgentOutputPanel below.
+  const [analysisLabel, setAnalysisLabel] = useState('');
 
   const isBusy = formSubmitting || reanalysingId !== null;
 
@@ -45,6 +47,9 @@ export function MetricsWorkspace({ initialMetrics }: MetricsWorkspaceProps) {
         case 'metric_saved': {
           const metric = event.metric as CampaignMetricsRecord;
           targetMetricId = metric.id;
+          setAnalysisLabel(
+            `${metric.platform} — ${metric.weekStart.slice(0, 10)} to ${metric.weekEnd.slice(0, 10)}`,
+          );
           setMetrics((current) => {
             const exists = current.some((m) => m.id === metric.id);
             return exists
@@ -169,6 +174,7 @@ export function MetricsWorkspace({ initialMetrics }: MetricsWorkspaceProps) {
           raw={analysisRaw}
           isRunning={isBusy}
           error={analysisError}
+          goal={analysisLabel}
         />
       )}
 

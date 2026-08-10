@@ -17,6 +17,7 @@ import {
   splitMemoryBlock,
   type LoadedMemory,
 } from '@/lib/ai/memory';
+import { buildPerformanceAnalystTelegramMessage, sendTelegramMessage } from '@/lib/integrations/telegram';
 import { AIProviderError, AgentNotFoundError, errorMessage } from '@/lib/utils';
 
 export interface RunAgentOptions {
@@ -194,8 +195,15 @@ export async function runAgent(options: RunAgentOptions): Promise<RunAgentResult
   // 9. Parse and persist the memories.
   const memoriesSaved = await saveMemories(agentId, run.id, parseMemoryBlock(memoryBlock));
 
-  // 10. Telegram notification for Performance Analyst runs lands with the integrations batch.
-  //     It must be wrapped so a Telegram failure can never fail the run.
+  // 10. Notify Telegram for Performance Analyst runs. sendTelegramMessage never throws on its
+  //     own, but the extra try/catch guarantees a failure here can never fail the run either way.
+  if (agentId === 'performance-analyst') {
+    try {
+      await sendTelegramMessage(buildPerformanceAnalystTelegramMessage(goal, output));
+    } catch (error) {
+      console.error('[runAgent] Telegram notification failed (run still succeeded):', error);
+    }
+  }
 
   return {
     runId: run.id,

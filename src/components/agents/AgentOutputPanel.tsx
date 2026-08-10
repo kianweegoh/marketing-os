@@ -4,8 +4,11 @@ import { useState } from 'react';
 import { AlertCircle, Check, Copy, Download, Search, Sparkles } from 'lucide-react';
 import { MarkdownRenderer } from '@/components/shared/MarkdownRenderer';
 import { EmptyState } from '@/components/shared/EmptyState';
+import { PushToCalendarButton } from '@/components/shared/PushToCalendarButton';
+import { SaveToDocsButton } from '@/components/shared/SaveToDocsButton';
+import { useToast } from '@/components/shared/Toast';
 import type { AgentConfig } from '@/lib/agents/types';
-import { cn, parseOutputSegments, stripMarkers } from '@/lib/utils';
+import { cn, parseOutputSegments, stripMarkers, toIsoDate } from '@/lib/utils';
 
 interface AgentOutputPanelProps {
   agent: AgentConfig;
@@ -13,21 +16,27 @@ interface AgentOutputPanelProps {
   raw: string;
   isRunning: boolean;
   error: string | null;
+  /** The run's goal — feeds the Save to Docs title. Optional so non-agent callers still compile. */
+  goal?: string;
 }
 
-export function AgentOutputPanel({ agent, raw, isRunning, error }: AgentOutputPanelProps) {
+export function AgentOutputPanel({ agent, raw, isRunning, error, goal }: AgentOutputPanelProps) {
   const [copied, setCopied] = useState(false);
+  const { showToast } = useToast();
   const segments = parseOutputSegments(raw);
   const plainText = stripMarkers(raw);
   const hasOutput = plainText.length > 0;
+  const isFinal = hasOutput && !isRunning;
 
   async function handleCopy(): Promise<void> {
     try {
       await navigator.clipboard.writeText(plainText);
       setCopied(true);
+      showToast('Copied to clipboard.');
       window.setTimeout(() => setCopied(false), 2000);
     } catch (caught) {
       console.error('[output] Copy failed:', caught);
+      showToast('Could not copy — your browser blocked clipboard access.', { variant: 'error' });
     }
   }
 
@@ -36,21 +45,22 @@ export function AgentOutputPanel({ agent, raw, isRunning, error }: AgentOutputPa
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${agent.id}-${new Date().toISOString().slice(0, 10)}.md`;
+    link.download = `${agent.id}-${toIsoDate(new Date())}.md`;
     link.click();
     URL.revokeObjectURL(url);
+    showToast('Exported as Markdown.');
   }
 
   return (
     <section className="rounded-xl border border-line bg-surface">
-      <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3">
         <h2 className="text-sm font-medium text-ink">Output</h2>
 
         {hasOutput && (
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5">
             <button
               type="button"
-              onClick={handleCopy}
+              onClick={() => void handleCopy()}
               className="inline-flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-xs text-ink-muted transition-colors hover:bg-field hover:text-ink"
             >
               {copied ? (
@@ -69,7 +79,15 @@ export function AgentOutputPanel({ agent, raw, isRunning, error }: AgentOutputPa
               <Download className="h-3.5 w-3.5" aria-hidden="true" />
               Export .md
             </button>
-            {/* Save to Docs button lands with the Google integration batch. */}
+
+            {/* Wait for the run to finish — exporting a partial stream mid-run would save
+                incomplete output. */}
+            {isFinal && (
+              <>
+                <SaveToDocsButton agentName={agent.name} goal={goal ?? ''} content={plainText} />
+                {agent.id === 'content-social' && <PushToCalendarButton content={plainText} />}
+              </>
+            )}
           </div>
         )}
       </div>

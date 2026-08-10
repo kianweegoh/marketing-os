@@ -63,3 +63,18 @@ export interface CampaignMetricsRecord {
   analysisRunId: string | null;
   createdAt: string;
 }
+
+/** One row parsed out of a Content & Social agent's markdown content calendar table. */
+export interface CalendarEvent {
+  date: string; // ISO date (YYYY-MM-DD)
+  platform: string;
+  format: string;
+  hook: string;
+  caption?: string;
+}
+
+/** Connection state for each optional integration, shown in Settings. */
+export interface IntegrationStatus {
+  telegram: { configured: boolean };
+  google: { configured: boolean; connected: boolean };
+}
