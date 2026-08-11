@@ -3,7 +3,7 @@ import { getCompanyContext } from '@/lib/companyContext';
 import { getIntegrationStatus } from '@/lib/integrations/status';
 import { SettingsWorkspace } from '@/components/settings/SettingsWorkspace';
 
-export const metadata: Metadata = { title: 'Settings · Kalo AI Marketing OS' };
+export const metadata: Metadata = { title: 'Settings · Marketing OS' };
 
 // Reads the company context and cookie-based Google connection state at request time.
 export const dynamic = 'force-dynamic';

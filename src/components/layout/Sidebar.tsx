@@ -34,10 +34,10 @@ export function Sidebar() {
     <nav className="sticky top-0 flex h-screen w-16 shrink-0 flex-col border-r border-line bg-sidebar lg:w-64">
       <div className="flex h-14 shrink-0 items-center justify-center border-b border-line px-3 lg:justify-start lg:px-5">
         <span className="hidden text-sm font-semibold tracking-tight text-ink lg:inline">
-          Kalo AI <span className="text-ink-muted">· Marketing OS</span>
+          Marketing <span className="text-ink-muted">OS</span>
         </span>
         <span className="text-sm font-semibold text-ink lg:hidden" aria-hidden="true">
-          K
+          M
         </span>
       </div>
 

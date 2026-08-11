@@ -3,7 +3,7 @@ import { ToastProvider } from '@/components/shared/Toast';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Kalo AI Marketing OS',
+  title: 'Marketing OS',
   description:
     'A multi-agent marketing operations platform. Seven specialist agents, one shared company context.',
 };

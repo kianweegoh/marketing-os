@@ -47,7 +47,7 @@ export default function LoginPage() {
             <LockKeyhole className="h-5 w-5 text-ink-muted" aria-hidden="true" />
           </div>
           <h1 className="text-xl font-semibold tracking-tight text-ink">
-            Kalo AI <span className="text-ink-muted">· Marketing OS</span>
+            Marketing <span className="text-ink-muted">OS</span>
           </h1>
           <p className="mt-1.5 text-sm text-ink-muted">Sign in to continue</p>
         </div>

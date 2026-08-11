@@ -3,7 +3,7 @@ import { prisma } from '@/lib/db';
 import { MetricsWorkspace } from '@/components/metrics/MetricsWorkspace';
 import type { CampaignMetricsRecord } from '@/types';
 
-export const metadata: Metadata = { title: 'Campaign Metrics · Kalo AI Marketing OS' };
+export const metadata: Metadata = { title: 'Campaign Metrics · Marketing OS' };
 
 // Metrics are written at runtime — never bake this into a static prerender.
 export const dynamic = 'force-dynamic';

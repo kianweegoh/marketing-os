@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { LibraryWorkspace } from '@/components/library/LibraryWorkspace';
 
-export const metadata: Metadata = { title: 'Output Library · Kalo AI Marketing OS' };
+export const metadata: Metadata = { title: 'Output Library · Marketing OS' };
 
 export default function LibraryPage() {
   return (

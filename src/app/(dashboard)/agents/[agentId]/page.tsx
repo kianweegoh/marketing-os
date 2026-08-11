@@ -15,10 +15,10 @@ export function generateStaticParams(): Array<{ agentId: string }> {
 export function generateMetadata({ params }: AgentPageProps): Metadata {
   const agent = getAgent(params.agentId);
 
-  if (!agent) return { title: 'Agent not found · Kalo AI Marketing OS' };
+  if (!agent) return { title: 'Agent not found · Marketing OS' };
 
   return {
-    title: `${agent.name} · Kalo AI Marketing OS`,
+    title: `${agent.name} · Marketing OS`,
     description: agent.description,
   };
 }

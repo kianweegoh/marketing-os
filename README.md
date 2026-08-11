@@ -1,4 +1,4 @@
-# Kalo AI Marketing OS
+# AI Marketing OS
 
 A multi-agent marketing operations platform. Seven specialist AI agents — each with its own
 personality, system prompt, persistent memory, and dedicated workspace — can be run individually or

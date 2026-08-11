@@ -9,12 +9,12 @@
  * Web Crypto only, no Node built-ins, no Prisma.
  */
 
-export const SESSION_COOKIE = 'kalo_session';
+export const SESSION_COOKIE = 'marketing_os_session';
 
 /** 7 days, in seconds. */
 export const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
 
-const TOKEN_SALT = 'kalo-marketing-os::session::v1';
+const TOKEN_SALT = 'marketing-os::session::v1';
 
 function toHex(buffer: ArrayBuffer): string {
   return Array.from(new Uint8Array(buffer))

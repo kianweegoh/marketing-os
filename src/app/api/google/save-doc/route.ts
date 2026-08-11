@@ -27,7 +27,7 @@ export async function POST(request: Request): Promise<NextResponse<{ success: tr
       return NextResponse.json({ error: 'There is no content to save yet.' }, { status: 400 });
     }
 
-    const agentName = typeof body.agentName === 'string' && body.agentName.trim() ? body.agentName : 'Kalo AI Marketing OS';
+    const agentName = typeof body.agentName === 'string' && body.agentName.trim() ? body.agentName : 'Marketing OS';
     const goalText = typeof body.title === 'string' && body.title.trim() ? body.title : 'Untitled run';
     const docTitle = `${agentName} — ${truncate(goalText, 60)} — ${format(new Date(), 'd MMM yyyy')}`;
 

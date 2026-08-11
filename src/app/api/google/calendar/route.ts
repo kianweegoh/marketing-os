@@ -19,7 +19,7 @@ function isCalendarEvent(value: unknown): value is CalendarEvent {
   );
 }
 
-/** POST /api/google/calendar — pushes content-calendar items onto the dedicated Kalo AI Marketing calendar. */
+/** POST /api/google/calendar — pushes content-calendar items onto the dedicated Marketing OS calendar. */
 export async function POST(
   request: Request,
 ): Promise<NextResponse<{ success: true; created: number; calendarUrl: string } | { error: string }>> {
@@ -40,7 +40,7 @@ export async function POST(
 
     // Never let a Telegram failure fail the calendar push it's reporting on.
     try {
-      await sendTelegramMessage(`📅 Pushed ${created} content items to your Kalo AI Marketing calendar`);
+      await sendTelegramMessage(`📅 Pushed ${created} content items to your Marketing OS calendar`);
     } catch (error) {
       console.error('[api/google/calendar] Telegram notification failed (push still succeeded):', error);
     }

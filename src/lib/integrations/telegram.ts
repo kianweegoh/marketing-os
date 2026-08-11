@@ -97,7 +97,7 @@ export function buildPerformanceAnalystTelegramMessage(goal: string, output: str
   const priorityActionsSection = extractSection(output, 'Priority Actions');
   const priorityActions = priorityActionsSection ? firstListItems(priorityActionsSection, 3) : '_Not found in the report — see full report._';
 
-  return `🤖 *Kalo AI Marketing OS — Performance Analyst*
+  return `🤖 *Marketing OS — Performance Analyst*
 
 *Task*
 ${escapeMarkdown(truncate(goal, 200))}
